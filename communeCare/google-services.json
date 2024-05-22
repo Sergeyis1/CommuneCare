@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "476585888476",
+    "project_id": "communecare121",
+    "storage_bucket": "communecare121.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:476585888476:android:3e5c9f7b73b5ffd1908219",
+        "android_client_info": {
+          "package_name": "com.communeCare121.ser"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjpaGjVPhkTe-EYaT9cGPtUg_q5VfTnYU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
