@@ -12,7 +12,7 @@ const Login = ({ navigation }) => {
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        navigation.navigate('Main');
+        navigation.navigate('Drawer');
       })
       .catch((error) => {
         console.error(error);
@@ -22,7 +22,7 @@ const Login = ({ navigation }) => {
   const handleRegister = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        navigation.navigate('Main');
+        navigation.navigate('Drawer');
       })
       .catch((error) => {
         console.error(error);

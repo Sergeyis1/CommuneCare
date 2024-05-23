@@ -29,11 +29,11 @@ const Stack = createStackNavigator();
 const DrawerNavigator = () => {
   return (
     <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
-      <Drawer.Screen name="Main" component={Main} options={{ title: 'Настройки' }} />
-      <Drawer.Screen name="Settings" component={Settings} options={{ title: 'Настройки' }} />
-      <Drawer.Screen name="AboutUs" component={AboutUs} options={{ title: 'О нас' }} />
+      <Drawer.Screen name="Main" component={Main} options={{ title: 'Домашняя странца' }} />
       <Drawer.Screen name="TaskList" component={TaskList} options={{ title: 'Список задач' }} />
       <Drawer.Screen name="Post" component={Post} options={{ title: 'Должность' }} />
+      <Drawer.Screen name="Settings" component={Settings} options={{ title: 'Настройки' }} />
+      <Drawer.Screen name="AboutUs" component={AboutUs} options={{ title: 'О нас' }} />
     </Drawer.Navigator>
   );
 };
@@ -44,12 +44,10 @@ const App = () => {
       <Stack.Navigator initialRouteName="WelWin">
         <Stack.Screen name="WelWin" component={WelWin} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-        <Stack.Screen name="Drawer" component={DrawerNavigator} />
+        <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
-
-
 
 export default App;

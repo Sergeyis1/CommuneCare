@@ -7,13 +7,6 @@ const Main = () => {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
-      <Ionicons 
-        name="menu" 
-        size={32} 
-        color="black" 
-        onPress={() => navigation.toggleDrawer()} 
-        style={styles.menuButton} 
-      />
       <Text style={styles.heading}>Добро пожаловать в CommuneCare</Text>
     </View>
   );
