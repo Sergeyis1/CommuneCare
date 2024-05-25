@@ -1,46 +1,54 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const TaskList = () => {
+const TaskList = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Список задач</Text>
+      <Text style={styles.title}>Ваш список задач</Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('ResidentCount')}
+        >
+          <Text style={styles.buttonText}>Проверка численности</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Проверка на чистоту</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
-const getResidentData = async (residentID) => {
-  try {
-    const residentDoc = await firestore().collection('Residents').doc(residentID).get();
-    const residentData = residentDoc.data();
-
-    const floorRef = residentData.Floors;
-    const roomRef = residentData.Room;
-
-    const floorDoc = await floorRef.get();
-    const roomDoc = await roomRef.get();
-
-    console.log('Resident Data:', residentData);
-    console.log('Floor Data:', floorDoc.data());
-    console.log('Room Data:', roomDoc.data());
-  } catch (error) {
-    console.error('Error getting documents:', error);
-  }
-};
-
-getResidentData('residentID_1');
+export default TaskList;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
+    alignItems: 'center',
     justifyContent: 'center',
+  },
+  title: {
+    fontSize: 24,
+    color: 'white',
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    width: '80%',
     alignItems: 'center',
   },
-  heading: {
-    fontSize: 24,
-    textAlign: 'center',
+  button: {
+    backgroundColor: '#D58A8A',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginVertical: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
   },
 });
-
-export default TaskList;
