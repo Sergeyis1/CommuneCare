@@ -1,71 +1,69 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { firestore } from './App';
-import { doc, getDoc } from 'firebase/firestore';
 
-const TaskList = () => {
-  const [data, setData] = useState(null);
+const ResidentList = () => {
+  const [residents, setResidents] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchResidents = async () => {
       try {
-        // Получаем документ жителя
-        const residentDoc = await getDoc(doc(firestore, 'Residents', 'residentID_3'));
-        if (!residentDoc.exists()) {
-          console.log('No such resident!');
-          return;
-        }
+        // Получаем все документы из коллекции "Residents"
+        const residentsCollection = collection(firestore, 'Residents');
+        const snapshot = await getDocs(query(residentsCollection, orderBy('Room', 'asc')));
         
-        const residentData = residentDoc.data();
-        const floorId = residentData.Floor;
-        const roomId = residentData.Room;
+        // Преобразуем данные в массив объектов
+        const residentList = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
 
-        // Получаем документ этажа
-        const floorDoc = await getDoc(doc(firestore, 'Floors', floorId));
-        if (!floorDoc.exists()) {
-          console.log('No such floor!');
-          return;
-        }
-
-        // Получаем документ комнаты
-        const roomDoc = await getDoc(doc(firestore, 'Rooms', roomId));
-        if (!roomDoc.exists()) {
-          console.log('No such room!');
-          return;
-        }
-
-        // Объединяем данные
-        setData({
-          resident: residentData,
-          floor: floorDoc.data(),
-          room: roomDoc.data(),
-        });
+        // Обновляем состояние
+        setResidents(residentList);
       } catch (error) {
-        console.error('Error getting documents:', error);
+        console.error('Error fetching residents:', error);
       }
     };
 
-    fetchData();
+    fetchResidents();
   }, []);
 
-  if (!data) {
-    return <Text>Loading...</Text>;
-  }
-
   return (
-    <View style={styles.container}>
-      <Text>Resident: {data.resident.Name}</Text>
-      <Text>Floor: {data.floor.Num}</Text>
-      <Text>Room: {data.room.Num}</Text>
-    </View>
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>Список жильцов</Text>
+      {residents.map(resident => (
+        <View key={resident.id} style={styles.residentContainer}>
+          <Text>Имя: {resident.Name}</Text>
+          <Text>Этаж: {resident.Floor}</Text>
+          <Text>Комната: {resident.Room}</Text>
+          {/* Дополнительные данные о жильце, если необходимо */}
+        </View>
+      ))}
+    </ScrollView>
   );
 };
 
-export default TaskList;
+export default ResidentList;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 16,
   },
-  // Add your styles here if needed
+  title: {
+    fontSize: 24,
+    color: 'black',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  residentContainer: {
+    marginBottom: 20,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+  },
 });
+

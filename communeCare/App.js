@@ -36,6 +36,7 @@ const DrawerNavigator = () => {
       <Drawer.Screen name="Post" component={Post} options={{ title: 'Должность' }} />
       <Drawer.Screen name="Settings" component={Settings} options={{ title: 'Настройки' }} />
       <Drawer.Screen name="AboutUs" component={AboutUs} options={{ title: 'О нас' }} />
+      <Drawer.Screen name="ResidentCount" component={ResidentCount} options={{ title: 'Проверка численности' }} />
     </Drawer.Navigator>
   );
 };
