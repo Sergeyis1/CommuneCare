@@ -7,7 +7,7 @@ const DrawerContent = (props) => {
     <DrawerContentScrollView {...props}>
       <View style={styles.container}>
         <Text style={styles.drawerTitle}>CommuneCare</Text>
-        <DrawerItemList {...props} />
+        <DrawerItemList {...props} style={styles.drawerItemList} />
         <Text style={styles.version}>Версия 1.0.0</Text>
       </View>
     </DrawerContentScrollView>
@@ -23,9 +23,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 20,
   },
+  drawerItemList: {
+    marginBottom: 20, // Увеличиваем отступ снизу
+  },
   version: {
     position: 'absolute',
-    bottom: 16,
+    bottom: -1, // Расположить текст версии немного выше, чтобы он не был прямо у края экрана
     left: 16,
   },
 });

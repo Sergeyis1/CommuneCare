@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, Modal } from 'react-native';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { firestore } from './App';
+import { View, Text, StyleSheet, ScrollView, Button, Modal, TouchableOpacity } from 'react-native';
+import { collection, getDocs, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
+import { firestore } from './firebaseConfig';
 import { Checkbox } from 'expo-checkbox';
 
 const ResidentList = () => {
@@ -45,6 +45,21 @@ const ResidentList = () => {
     setShowModal(true);
   };
 
+  const handleSaveReport = async () => {
+    try {
+      await addDoc(collection(firestore, 'Reports'), {
+        date: serverTimestamp(),
+        type: 'Проверка численности',
+        results: checkedState,
+        count: count
+      });
+      console.log('Отчет успешно сохранен.');
+    } catch (error) {
+      console.error('Ошибка при сохранении отчета:', error);
+    }
+    setShowModal(false);
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -76,7 +91,12 @@ const ResidentList = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Результат подсчета жителей:</Text>
             <Text style={styles.modalCount}>В общежитии {count} человек</Text>
-            <Button title="Закрыть" onPress={() => setShowModal(false)} />
+            <View style={styles.modalButton}>
+              <Button title="Сохранить отчет" onPress={handleSaveReport} />
+            </View>
+            <View style={styles.modalButton}>
+              <Button title="Закрыть" onPress={() => setShowModal(false)} />
+            </View>
           </View>
         </View>
       </Modal>
@@ -135,10 +155,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
   },
+  modalButton: {
+    width: '100%',
+    marginVertical: 10,
+    borderRadius: 10
+  },
   buttonContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
     alignSelf: 'center',
-    width: '80%',
-    borderRadius: 10, // закругленные края
-    overflow: 'hidden', // обрезать содержимое, которое выходит за пределы радиуса
+    width: '70%',
+    borderRadius: 20,
+    overflow: 'hidden',
   },
 });

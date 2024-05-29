@@ -11,20 +11,9 @@ import Settings from './Settings';
 import TaskList from './TaskList';
 import ResidentCount from './ResidentCount';
 import DrawerContent from './DrawerContent';
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { Ionicons } from '@expo/vector-icons';
+import SanitaryCheck from './SanitaryCheck';
+import ReportList from './ReportList';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDjpaGjVPhkTe-EYaT9cGPtUg_q5VfTnYU",
-  authDomain: "communecare121.firebaseapp.com",
-  projectId: "communecare121",
-  storageBucket: "communecare121.appspot.com",
-  messagingSenderId: "476585888476",
-  appId: "1:476585888476:Android:3e5c9f7b73b5ffd1908219"
-};
-const app = initializeApp(firebaseConfig);
-const firestore = getFirestore(app);
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
@@ -36,7 +25,6 @@ const DrawerNavigator = () => {
       <Drawer.Screen name="Post" component={Post} options={{ title: 'Должность' }} />
       <Drawer.Screen name="Settings" component={Settings} options={{ title: 'Настройки' }} />
       <Drawer.Screen name="AboutUs" component={AboutUs} options={{ title: 'О нас' }} />
-      <Drawer.Screen name="ResidentCount" component={ResidentCount} options={{ title: 'Проверка численности' }} />
     </Drawer.Navigator>
   );
 };
@@ -49,10 +37,11 @@ const App = () => {
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="ResidentCount" component={ResidentCount} options={{ title: 'Проверка численности' }} />
+        <Stack.Screen name="SanitaryCheck" component={SanitaryCheck} options={{ title: 'Санитарная проверка' }} />
+        <Stack.Screen name="ReportList" component={ReportList} options={{ title: 'Список отчетов' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
 export default App;
-export { firestore };
