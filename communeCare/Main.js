@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button, BackHandler, Modal, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, BackHandler, Modal, TouchableOpacity, Image } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Main = ({ navigation }) => {
   const [exitModalVisible, setExitModalVisible] = useState(false);
 
-  useEffect(() => {
-    const backAction = () => {
-      setExitModalVisible(true);
-      return true;
-    };
+  useFocusEffect(
+    React.useCallback(() => {
+      const backAction = () => {
+        setExitModalVisible(true);
+        return true;
+      };
 
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction
-    );
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backAction
+      );
 
-    return () => backHandler.remove();
-  }, []);
+      return () => backHandler.remove();
+    }, [])
+  );
 
   const handleExit = () => {
     BackHandler.exitApp();

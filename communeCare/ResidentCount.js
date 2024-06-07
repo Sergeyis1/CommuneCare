@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
 import { collection, getDocs, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
 import { firestore } from './firebaseConfig';
 import { Checkbox } from 'expo-checkbox';
@@ -80,7 +80,9 @@ const ResidentList = () => {
         ))}
       </ScrollView>
       <View style={styles.buttonContainer}>
-        <Button title="Завершить проверку" onPress={handleFinishCheck} />
+        <TouchableOpacity style={styles.button} onPress={handleFinishCheck}>
+          <Text style={styles.buttonText}>Завершить проверку</Text>
+        </TouchableOpacity>
       </View>
       <Modal
         visible={showModal}
@@ -91,11 +93,13 @@ const ResidentList = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Результат подсчета жителей:</Text>
             <Text style={styles.modalCount}>В общежитии {count} человек</Text>
-            <View style={styles.modalButton}>
-              <Button title="Сохранить отчет" onPress={handleSaveReport} />
-            </View>
-            <View style={styles.modalButton}>
-              <Button title="Закрыть" onPress={() => setShowModal(false)} />
+            <View style={styles.modalButtonContainer}>
+              <TouchableOpacity style={styles.button} onPress={handleSaveReport}>
+                <Text style={styles.buttonText}>Сохранить отчет</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => setShowModal(false)}>
+                <Text style={styles.buttonText}>Закрыть</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -155,10 +159,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
   },
-  modalButton: {
+  modalButtonContainer: {
     width: '100%',
-    marginVertical: 10,
-    borderRadius: 10
+    alignItems: 'center',
   },
   buttonContainer: {
     justifyContent: 'center',
@@ -166,7 +169,22 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     alignSelf: 'center',
     width: '70%',
-    borderRadius: 20,
+    borderRadius: 10,
     overflow: 'hidden',
+  },
+  button: {
+    backgroundColor: '#6200ee',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  cancelButton: {
+    backgroundColor: '#e53935',
   },
 });

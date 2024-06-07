@@ -1,56 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, Switch, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Picker } from '@react-native-picker/picker';
+import * as Notifications from "expo-notifications"
 
 const Settings = () => {
-  const [themeColor, setThemeColor] = useState('blue');
-  const [textSize, setTextSize] = useState('medium');
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-
   const navigation = useNavigation();
-
-  const handleThemeChange = (color) => {
-    setThemeColor(color);
-    // Здесь можно сохранить цвет темы в AsyncStorage или другом месте для сохранения состояния
-  };
-
-  const handleTextSizeChange = (size) => {
-    setTextSize(size);
-    // Здесь можно сохранить размер текста в AsyncStorage или другом месте для сохранения состояния
-  };
-
+  const getNotificationPermission = async () => {
+    const { status } = await Notifications.requestPermissionsAsync();
+    if (status === 'granted') {
+      setNotificationsEnabled(true)
+    return
+    }
+    if (status === "denied") {
+      setNotificationsEnabled(false)
+    return;
+    }
+    
+    };
   const handleToggleNotifications = () => {
     setNotificationsEnabled(previousState => !previousState);
     // Здесь можно сохранить состояние уведомлений в AsyncStorage или другом месте для сохранения состояния
   };
 
+  const handleLogout = () => {
+    // Здесь можно добавить логику выхода из учетной записи
+    navigation.navigate('Login');
+  };
+useEffect(()=>{
+  (async () => {
+    await getNotificationPermission()
+})()
+},[]) 
   return (
-    <View style={[styles.container, { backgroundColor: themeColor === 'blue' ? '#cce7ff' : themeColor === 'green' ? '#ccffcc' : '#ffcccc' }]}>
+    <View style={styles.container}>
       <Text style={styles.title}>Настройки</Text>
       
-      <Text style={styles.label}>Цвет темы настроек</Text>
-      <Picker
-        selectedValue={themeColor}
-        style={styles.picker}
-        onValueChange={(itemValue) => handleThemeChange(itemValue)}
-      >
-        <Picker.Item label="Синий" value="blue" />
-        <Picker.Item label="Зеленый" value="green" />
-        <Picker.Item label="Красный" value="red" />
-      </Picker>
-
-      <Text style={styles.label}>Размер текста</Text>
-      <Picker
-        selectedValue={textSize}
-        style={styles.picker}
-        onValueChange={(itemValue) => handleTextSizeChange(itemValue)}
-      >
-        <Picker.Item label="Маленький" value="small" />
-        <Picker.Item label="Средний" value="medium" />
-        <Picker.Item label="Большой" value="large" />
-      </Picker>
-
       <View style={styles.switchContainer}>
         <Text style={styles.label}>Уведомления</Text>
         <Switch
@@ -58,12 +43,10 @@ const Settings = () => {
           onValueChange={handleToggleNotifications}
         />
       </View>
-      
-      <Button
-        title="Сохранить"
-        onPress={() => alert('Настройки сохранены!')}
-        color={themeColor}
-      />
+
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutButtonText}>Выйти из учетной записи</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -72,6 +55,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: 'white',
   },
   title: {
     fontSize: 24,
@@ -80,18 +64,24 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 18,
-    marginBottom: 8,
-    marginTop: 16,
-  },
-  picker: {
-    height: 50,
-    width: '100%',
   },
   switchContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 16,
+  },
+  logoutButton: {
+    backgroundColor: '#e53935',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  logoutButtonText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 

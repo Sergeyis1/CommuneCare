@@ -26,6 +26,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5db8dd84-c55c-4d58-b1f3-4623992891cc"
+      }
+    },
+    "owner": "sergey1208"
   }
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Modal, Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
 import { collection, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { firestore } from './firebaseConfig';
 import { Picker } from '@react-native-picker/picker';
@@ -34,6 +34,7 @@ const SanitaryCheck = () => {
     }));
     if (rating < 5) {
       setSelectedRoom(room);
+      setReasons([]); // Очистка причин при выборе новой комнаты
       setShowModal(true);
     }
   };
@@ -94,7 +95,9 @@ const SanitaryCheck = () => {
         ))}
       </ScrollView>
       <View style={styles.buttonContainer}>
-        <Button title="Завершить проверку" onPress={handleFinishCheck} />
+        <TouchableOpacity style={styles.button} onPress={handleFinishCheck}>
+          <Text style={styles.buttonText}>Завершить проверку</Text>
+        </TouchableOpacity>
       </View>
       <Modal
         visible={showModal}
@@ -133,7 +136,9 @@ const SanitaryCheck = () => {
               />
               <Text style={styles.checkboxLabel}>Плохая вентиляция</Text>
             </View>
-            <Button title="Подтвердить" onPress={handleModalClose} />
+            <TouchableOpacity style={styles.button} onPress={handleModalClose}>
+              <Text style={styles.buttonText}>Подтвердить</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -146,8 +151,12 @@ const SanitaryCheck = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Завершить проверку</Text>
             <Text style={styles.modalText}>Вы уверены, что хотите завершить проверку и сохранить отчет?</Text>
-            <Button title="Сохранить отчет" onPress={handleSaveReport} />
-            <Button title="Отмена" onPress={() => setShowSaveModal(false)} />
+            <TouchableOpacity style={styles.button} onPress={handleSaveReport}>
+              <Text style={styles.buttonText}>Сохранить отчет</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => setShowSaveModal(false)}>
+              <Text style={styles.buttonText}>Отмена</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -219,9 +228,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 20,
-    alignSelf: 'center',
-    width: '70%',
-    borderRadius: 10,
-    overflow: 'hidden',
+  },
+  button: {
+    backgroundColor: '#6200ee',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  cancelButton: {
+    backgroundColor: '#e53935',
   },
 });
