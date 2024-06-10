@@ -22,9 +22,9 @@ const TaskList = () => {
 
           if (!querySnapshot.empty) {
             const userData = querySnapshot.docs[0].data();
-            setUserRole(userData.Должность || 'Должность не указана');
+            setUserRole(userData.Должность || '');
           } else {
-            setUserRole('Пользователь не найден');
+            setUserRole('');
           }
         }
       } catch (error) {
@@ -39,6 +39,17 @@ const TaskList = () => {
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  if (!userRole) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.noRoleText}>У вас нет должности. Пожалуйста, обратитесь к администратору.</Text>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+          <Text style={styles.buttonText}>Назад</Text>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   return (
@@ -111,6 +122,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  noRoleText: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginVertical: 20,
+    color: 'red',
   },
 });
 

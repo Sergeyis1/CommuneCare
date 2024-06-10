@@ -6,18 +6,6 @@ import * as Notifications from "expo-notifications"
 const Settings = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const navigation = useNavigation();
-  const getNotificationPermission = async () => {
-    const { status } = await Notifications.requestPermissionsAsync();
-    if (status === 'granted') {
-      setNotificationsEnabled(true)
-    return
-    }
-    if (status === "denied") {
-      setNotificationsEnabled(false)
-    return;
-    }
-    
-    };
   const handleToggleNotifications = () => {
     setNotificationsEnabled(previousState => !previousState);
     // Здесь можно сохранить состояние уведомлений в AsyncStorage или другом месте для сохранения состояния
@@ -27,11 +15,7 @@ const Settings = () => {
     // Здесь можно добавить логику выхода из учетной записи
     navigation.navigate('Login');
   };
-useEffect(()=>{
-  (async () => {
-    await getNotificationPermission()
-})()
-},[]) 
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Настройки</Text>

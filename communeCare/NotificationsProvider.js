@@ -1,11 +1,6 @@
 import { useEffect } from 'react'
 import { getOrRegisterPushToken, initNotificationsListen } from './App'
-
-
-
 export const NotificationsProvider = () => {
-    
-
     useEffect(() => {
         
             (async () => {
@@ -26,6 +21,5 @@ export const NotificationsProvider = () => {
             })()
         }
     ,[])
-
     return <></>
 }
