@@ -4,29 +4,35 @@ import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { firestore } from './firebaseConfig';
+import withPullToRefresh from './withPullToRefresh';
 
-const TaskList = () => {
-  const navigation = useNavigation();
-  const [userRole, setUserRole] = useState(null);
-  const [loading, setLoading] = useState(true);
+const fetchUserRole = async () => {
   const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (user) {
+    const usersCollection = collection(firestore, 'Users');
+    const q = query(usersCollection, where('Почта', '==', user.email));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const userData = querySnapshot.docs[0].data();
+      return userData.Должность || 'Должность не указана';
+    } else {
+      return 'Пользователь не найден';
+    }
+  }
+};
+
+const TaskList = ({ userRole, setUserRole }) => {
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUserRole = async () => {
+    const fetchRole = async () => {
       try {
-        const user = auth.currentUser;
-        if (user) {
-          const usersCollection = collection(firestore, 'Users');
-          const q = query(usersCollection, where('Почта', '==', user.email));
-          const querySnapshot = await getDocs(q);
-
-          if (!querySnapshot.empty) {
-            const userData = querySnapshot.docs[0].data();
-            setUserRole(userData.Должность || '');
-          } else {
-            setUserRole('');
-          }
-        }
+        const role = await fetchUserRole();
+        setUserRole(role);
       } catch (error) {
         console.error('Ошибка при получении должности пользователя:', error);
       } finally {
@@ -34,22 +40,11 @@ const TaskList = () => {
       }
     };
 
-    fetchUserRole();
-  }, [auth]);
+    fetchRole();
+  }, [setUserRole]);
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
-  }
-
-  if (!userRole) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.noRoleText}>У вас нет должности. Пожалуйста, обратитесь к администратору.</Text>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
-          <Text style={styles.buttonText}>Назад</Text>
-        </TouchableOpacity>
-      </View>
-    );
   }
 
   return (
@@ -123,12 +118,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  noRoleText: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginVertical: 20,
-    color: 'red',
-  },
 });
 
-export default TaskList;
+const TaskListWithPullToRefresh = withPullToRefresh((props) => {
+  const [userRole, setUserRole] = useState(null);
+
+  return <TaskList {...props} userRole={userRole} setUserRole={setUserRole} />;
+}, fetchUserRole);
+
+export default TaskListWithPullToRefresh;

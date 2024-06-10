@@ -1,68 +1,73 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { firestore } from './firebaseConfig';
+import withPullToRefresh from './withPullToRefresh';
 
-const ReportList = ({ navigation }) => {
-  const [reports, setReports] = useState([]);
+const fetchReports = async () => {
+  try {
+    const reportsCollection = collection(firestore, 'Reports');
+    const q = query(reportsCollection, orderBy('date', 'desc'));
+    const snapshot = await getDocs(q);
+    const reportList = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return reportList;
+  } catch (error) {
+    console.error('Error fetching reports:', error);
+    throw error;
+  }
+};
 
+const ReportList = ({ reports, setReports }) => {
   useEffect(() => {
-    const fetchReports = async () => {
+    const fetchInitialReports = async () => {
       try {
-        const reportsCollection = collection(firestore, 'Reports');
-        const q = query(reportsCollection, orderBy('date', 'desc'));
-        const snapshot = await getDocs(q);
-        const reportList = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const reportList = await fetchReports();
         setReports(reportList);
       } catch (error) {
         console.error('Error fetching reports:', error);
       }
     };
-    fetchReports();
-  }, []);
+
+    fetchInitialReports();
+  }, [setReports]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Список отчетов</Text>
-      <ScrollView>
-        {reports.map(report => (
-          <View key={report.id} style={styles.reportContainer}>
-            <Text style={styles.reportDate}>Дата: {new Date(report.date.seconds * 1000).toLocaleString()}</Text>
-            <Text style={styles.reportType}>Тип отчета: {report.type}</Text>
-            {report.type === 'Проверка численности' && (
-              <View>
-                <Text style={styles.reportTitle}>Количество жителей:</Text>
-                <Text style={styles.reportText}>{report.count}</Text>
-              </View>
-            )}
-            {report.type === 'Санитарная проверка' && (
-              <View>
-                <Text style={styles.reportTitle}>Оценки:</Text>
-                {Object.keys(report.ratings).map(room => (
-                  <Text key={room} style={styles.reportText}>Комната {room}: {report.ratings[room]}</Text>
-                ))}
-                {report.reasons.length > 0 && (
-                  <View>
-                    <Text style={styles.reportTitle}>Причины снижения оценок:</Text>
-                    {report.reasons.map(reason => (
-                      <Text key={reason} style={styles.reportText}>{reason}</Text>
-                    ))}
-                  </View>
-                )}
-              </View>
-            )}
-          </View>
-        ))}
-      </ScrollView>
-      <Button title="Назад к задачам" onPress={() => navigation.goBack()} />
+      {reports.map(report => (
+        <View key={report.id} style={styles.reportContainer}>
+          <Text style={styles.reportDate}>Дата: {new Date(report.date.seconds * 1000).toLocaleString()}</Text>
+          <Text style={styles.reportType}>Тип отчета: {report.type}</Text>
+          {report.type === 'Проверка численности' && (
+            <View>
+              <Text style={styles.reportTitle}>Количество жителей:</Text>
+              <Text style={styles.reportText}>{report.count}</Text>
+            </View>
+          )}
+          {report.type === 'Санитарная проверка' && (
+            <View>
+              <Text style={styles.reportTitle}>Оценки:</Text>
+              {Object.keys(report.ratings).map(room => (
+                <Text key={room} style={styles.reportText}>Комната {room}: {report.ratings[room]}</Text>
+              ))}
+              {report.reasons.length > 0 && (
+                <View>
+                  <Text style={styles.reportTitle}>Причины снижения оценок:</Text>
+                  {report.reasons.map(reason => (
+                    <Text key={reason} style={styles.reportText}>{reason}</Text>
+                  ))}
+                </View>
+              )}
+            </View>
+          )}
+        </View>
+      ))}
     </View>
   );
 };
-
-export default ReportList;
 
 const styles = StyleSheet.create({
   container: {
@@ -100,3 +105,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+const ReportListWithPullToRefresh = withPullToRefresh((props) => {
+  const [reports, setReports] = useState([]);
+
+  return <ReportList {...props} reports={reports} setReports={setReports} />;
+}, fetchReports);
+
+export default ReportListWithPullToRefresh;
