@@ -14,6 +14,7 @@ import ResidentCount from './ResidentCount';
 import DrawerContent from './DrawerContent';
 import SanitaryCheck from './SanitaryCheck';
 import ReportList from './ReportList';
+import GameScreen from './GameScreen';
 
 
 const Drawer = createDrawerNavigator();
@@ -44,6 +45,7 @@ const App = () => {
         <Stack.Screen name="SanitaryCheck" component={SanitaryCheck} options={{ title: 'Санитарная проверка' }} />
         <Stack.Screen name="ReportList" component={ReportList} options={{ title: 'Список отчетов' }} />
         <Stack.Screen name="AssignDuty" component={AssignDuty} options={{ title: 'Назначение дежурства' }} />
+        <Stack.Screen name="Game" component={GameScreen} options={{ title: 'Игра' }} />
       </Stack.Navigator>
     </NavigationContainer>
     

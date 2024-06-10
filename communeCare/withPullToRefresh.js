@@ -9,7 +9,7 @@ const withPullToRefresh = (WrappedComponent) => {
       setRefreshing(true);
       setTimeout(() => {
         setRefreshing(false);
-      }, 2000); 
+      }, 2000);
     }, []);
 
     return (

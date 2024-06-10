@@ -21,6 +21,8 @@ const fetchUserRole = async () => {
     } else {
       return 'Пользователь не найден';
     }
+  } else {
+    return null;
   }
 };
 
@@ -45,6 +47,14 @@ const TaskList = ({ userRole, setUserRole }) => {
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  if (!userRole || userRole === 'Должность не указана' || userRole === 'Пользователь не найден') {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Вы не обладаете нужными правами доступа! Обратитесь к администратору.</Text>
+      </View>
+    );
   }
 
   return (
@@ -124,6 +134,6 @@ const TaskListWithPullToRefresh = withPullToRefresh((props) => {
   const [userRole, setUserRole] = useState(null);
 
   return <TaskList {...props} userRole={userRole} setUserRole={setUserRole} />;
-}, fetchUserRole);
+});
 
 export default TaskListWithPullToRefresh;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, BackHandler, Modal, TouchableOpacity, Image } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import withPullToRefresh from './withPullToRefresh';
@@ -119,5 +119,5 @@ const styles = StyleSheet.create({
 });
 
 export default Main;
-const MainWithPullToRefresh = withPullToRefresh(Main);
 
+const MainWithPullToRefresh = withPullToRefresh(Main);

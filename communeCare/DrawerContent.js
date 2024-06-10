@@ -8,7 +8,7 @@ const DrawerContent = (props) => {
       <View style={styles.container}>
         <Text style={styles.drawerTitle}>CommuneCare</Text>
         <DrawerItemList {...props} style={styles.drawerItemList} />
-        <Text style={styles.version}>Версия 1.0.2</Text>
+        <Text style={styles.version}>Версия 1.0.3</Text>
       </View>
     </DrawerContentScrollView>
   );

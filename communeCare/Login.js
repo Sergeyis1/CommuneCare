@@ -1,30 +1,64 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, Modal, TouchableOpacity, Alert } from 'react-native';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import NetInfo from '@react-native-community/netinfo';
 import { auth } from './firebaseConfig'; // Импортируйте auth из App.js
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsConnected(state.isConnected);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const handleLogin = () => {
+    if (!isConnected) {
+      Alert.alert('Ошибка', 'Нет подключения к интернету.');
+      return;
+    }
+
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         navigation.navigate('Drawer');
       })
       .catch((error) => {
-        console.error(error);
+        if (error.code === 'auth/user-not-found') {
+          Alert.alert('Ошибка', 'Пользователь не найден.');
+        } else if (error.code === 'auth/wrong-password') {
+          Alert.alert('Ошибка', 'Неверный пароль.');
+        } else {
+          console.error(error);
+          Alert.alert('Ошибка', 'Что-то пошло не так.');
+        }
       });
   };
 
   const handleRegister = () => {
+    if (!isConnected) {
+      Alert.alert('Ошибка', 'Нет подключения к интернету.');
+      return;
+    }
+
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         navigation.navigate('Drawer');
       })
       .catch((error) => {
-        console.error(error);
+        if (error.code === 'auth/email-already-in-use') {
+          Alert.alert('Ошибка', 'Пользователь с такой почтой уже существует.');
+        } else {
+          console.error(error);
+          Alert.alert('Ошибка', 'Что-то пошло не так.');
+        }
       });
   };
 
